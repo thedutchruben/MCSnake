@@ -1,0 +1,6 @@
+### Maven template
+target/
+
+.idea/
+MCSnake.iml
+
