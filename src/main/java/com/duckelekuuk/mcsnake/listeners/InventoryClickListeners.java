@@ -26,7 +26,7 @@ public class InventoryClickListeners implements Listener {
         event.setCancelled(true);
         event.setResult(Event.Result.DENY);
 
-        if (!console.isPlaying()) return;
+        if (console.isGameOver()) return;
 
         Button pressed = Button.getButton(event.getCurrentItem());
 
