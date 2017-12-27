@@ -28,6 +28,12 @@ public enum Button {
     private int x;
 
     public static Button getButton(ItemStack itemStack) {
-        return Arrays.stream(values()).filter(button -> itemStack.getItemMeta().getDisplayName().equals(button.getItem().getItemMeta().getDisplayName())).findFirst().orElse(null);
+        if (itemStack == null) return null;
+        return Arrays.stream(values())
+                .filter(button ->
+                        itemStack.hasItemMeta() &&
+                        itemStack.getItemMeta().getDisplayName().equals(button.getItem().getItemMeta().getDisplayName()))
+                .findFirst()
+                .orElse(null);
     }
 }

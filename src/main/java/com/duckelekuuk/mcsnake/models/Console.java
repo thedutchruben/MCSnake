@@ -40,15 +40,16 @@ public class Console {
     public void start() {
         playing = true;
 
-        this.timer = Bukkit.getServer().getScheduler().runTaskTimer(MCSnake.getPlugin(), new GameTimer(this), 1, Properties.GAME_SPEED);
+        timer = Bukkit.getServer().getScheduler().runTaskTimer(MCSnake.getPlugin(), new GameTimer(this), 1, Properties.GAME_SPEED);
     }
 
     public void endGame() {
         playing = false;
-        this.gameOver = true;
-        this.timer.cancel();
+        gameOver = true;
+        timer.cancel();
         getScreen().clear();
-        this.gameOverTimer = Bukkit.getServer().getScheduler().runTaskTimer(MCSnake.getPlugin(), new DisplayGameOver(this), 1, Properties.GAMEOVER_SPEED);
+
+        gameOverTimer = Bukkit.getServer().getScheduler().runTaskTimer(MCSnake.getPlugin(), new DisplayGameOver(this), 1, Properties.GAMEOVER_SPEED);
     }
 
     /**
@@ -84,7 +85,7 @@ public class Console {
                 break;
             case QUIT:
                 close();
-                break;
+                return;
         }
 
         if (snake.getDirection() != null && !snake.getDirection().canGo(nextDirection)) return;
@@ -97,6 +98,7 @@ public class Console {
         snake.setDirection(nextDirection);
 
         Button clickedButton = snake.getDirection().getButton();
+
         getController().setItem(InventoryUtils.getLocation(clickedButton.getX(), clickedButton.getY()), clickedButton.getItem_active());
 
         if (!playing) start();
