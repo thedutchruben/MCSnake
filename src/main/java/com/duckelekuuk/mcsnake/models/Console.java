@@ -1,6 +1,7 @@
 package com.duckelekuuk.mcsnake.models;
 
 import com.duckelekuuk.mcsnake.MCSnake;
+import com.duckelekuuk.mcsnake.models.buttons.IButton;
 import com.duckelekuuk.mcsnake.schedulers.DisplayGameOver;
 import com.duckelekuuk.mcsnake.schedulers.GameTimer;
 import com.duckelekuuk.mcsnake.utils.InventoryUtils;
@@ -11,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -24,8 +26,10 @@ public class Console {
     private Inventory inventory;
     private BukkitTask timer;
     private BukkitTask gameOverTimer;
+    private Button pressedButton;
 
     private Snake snake;
+    private List<Integer> food = new ArrayList<>();
 
     private boolean playing = false;
     private boolean gameOver = false;
@@ -40,15 +44,16 @@ public class Console {
     public void start() {
         playing = true;
 
-        this.timer = Bukkit.getServer().getScheduler().runTaskTimer(MCSnake.getPlugin(), new GameTimer(this), 1, Properties.GAME_SPEED);
+        timer = Bukkit.getServer().getScheduler().runTaskTimer(MCSnake.getPlugin(), new GameTimer(this), 1, Properties.GAME_SPEED);
     }
 
     public void endGame() {
         playing = false;
-        this.gameOver = true;
-        this.timer.cancel();
+        gameOver = true;
+        timer.cancel();
         getScreen().clear();
-        this.gameOverTimer = Bukkit.getServer().getScheduler().runTaskTimer(MCSnake.getPlugin(), new DisplayGameOver(this), 1, Properties.GAMEOVER_SPEED);
+
+        gameOverTimer = Bukkit.getServer().getScheduler().runTaskTimer(MCSnake.getPlugin(), new DisplayGameOver(this), 1, Properties.GAMEOVER_SPEED);
     }
 
     /**
@@ -84,7 +89,7 @@ public class Console {
                 break;
             case QUIT:
                 close();
-                break;
+                return;
         }
 
         if (snake.getDirection() != null && !snake.getDirection().canGo(nextDirection)) return;
@@ -97,6 +102,7 @@ public class Console {
         snake.setDirection(nextDirection);
 
         Button clickedButton = snake.getDirection().getButton();
+
         getController().setItem(InventoryUtils.getLocation(clickedButton.getX(), clickedButton.getY()), clickedButton.getItem_active());
 
         if (!playing) start();
@@ -127,7 +133,7 @@ public class Console {
             InventoryUtils.fillEmpty(getScreen(), Properties.SCREEN_BACKGROUND);
 
             /* Setup controller */
-            Arrays.asList(Button.values()).forEach(button -> getController().setItem(InventoryUtils.getLocation(button.getX(), button.getY()), button.getItem()));
+            Arrays.asList(Button.values()).forEach(button -> getController().setItem(InventoryUtils.getLocation(button.getInfo().getX(), button.getInfo().getY()), button.getInfo().getItem(false)));
             InventoryUtils.fillEmpty(getController(), Properties.CONTROLLER_BACKGROUND);
 
         }, 1);

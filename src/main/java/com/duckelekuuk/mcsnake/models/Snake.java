@@ -28,13 +28,18 @@ public class Snake {
     public void eatFood() {
         // Increase size
         size++;
+    }
 
+    public void spawnFood() {
         // Place new food block
         List<Integer> spots = IntStream.range(0, (Properties.WIDTH * Properties.HEIGHT) - 1).boxed().collect(Collectors.toList());
+        // Remove snake parts
         spots.removeAll(parts);
 
+        // Shuffle options
         Collections.shuffle(spots);
 
+        // Pick random spot
         console.getScreen().setItem(spots.get(0), Properties.FOOD);
     }
 

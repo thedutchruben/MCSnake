@@ -1,11 +1,11 @@
 package com.duckelekuuk.mcsnake.models;
 
+import com.duckelekuuk.mcsnake.models.buttons.*;
 import com.duckelekuuk.mcsnake.utils.ItemStackBuilder;
 import com.duckelekuuk.mcsnake.utils.Properties;
 import com.duckelekuuk.mcsnake.utils.SkullBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -15,19 +15,27 @@ import java.util.Arrays;
 @AllArgsConstructor
 public enum Button {
 
-    UP(new SkullBuilder().setBase64(Properties.SKULL_UP).setDisplayName("Up").build(), new SkullBuilder().setBase64(Properties.SKULL_UP_ACTIVE).setDisplayName("Up").build(), 1, 4),
-    DOWN(new SkullBuilder().setBase64(Properties.SKULL_DOWN).setDisplayName("Down").build(), new SkullBuilder().setBase64(Properties.SKULL_DOWN_ACTIVE).setDisplayName("Down").build(), 3, 4),
-    LEFT(new SkullBuilder().setBase64(Properties.SKULL_LEFT).setDisplayName("Left").build(), new SkullBuilder().setBase64(Properties.SKULL_LEFT_ACTIVE).setDisplayName("Left").build(), 2, 3),
-    RIGHT(new SkullBuilder().setBase64(Properties.SKULL_RIGHT).setDisplayName("Right").build(), new SkullBuilder().setBase64(Properties.SKULL_RIGHT_ACTIVE).setDisplayName("Right").build(), 2, 5),
-    QUIT(ItemStackBuilder.of(Material.BARRIER).displayName("Quit").build(), null, 1, 8);
+    UP(new UpButton()),
+    DOWN(new DownButton()),
+    LEFT(new LeftButton()),
+    RIGHT(new RightButton()),
+    QUIT(new QuitButton());
 
-    private ItemStack item;
-    @Setter
-    private ItemStack item_active;
-    private int y;
-    private int x;
+    private IButton info;
 
     public static Button getButton(ItemStack itemStack) {
-        return Arrays.stream(values()).filter(button -> itemStack.getItemMeta().getDisplayName().equals(button.getItem().getItemMeta().getDisplayName())).findFirst().orElse(null);
+        if (itemStack == null) return null;
+        if (itemStack.hasItemMeta()) return null;
+
+        return Arrays.stream(values())
+                .filter(button ->
+                        itemStack.isSimilar(button.getInfo().getItem(true)) ||
+                        itemStack.isSimilar(button.getInfo().getItem(false)))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public static boolean isButton(ItemStack itemStack) {
+        return Arrays.stream(values()).anyMatch(button -> itemStack.isSimilar(button.getInfo().getItem(true)) || itemStack.isSimilar(button.getInfo().getItem(false)));
     }
 }

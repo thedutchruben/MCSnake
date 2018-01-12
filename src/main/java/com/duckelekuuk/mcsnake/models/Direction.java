@@ -23,18 +23,4 @@ public enum Direction {
 
         return true;
     }
-
-    public Button getButton() {
-        switch (this) {
-            case UP:
-                return Button.UP;
-            case DOWN:
-                return Button.DOWN;
-            case LEFT:
-                return Button.LEFT;
-            case RIGHT:
-                return Button.RIGHT;
-        }
-        return null;
-    }
 }
