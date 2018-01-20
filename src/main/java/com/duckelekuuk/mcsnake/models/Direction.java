@@ -14,13 +14,4 @@ public enum Direction {
 
     private int offsetX;
     private int offsetY;
-
-    public boolean canGo(Direction direction) {
-        if (this.equals(UP)) return direction != DOWN;
-        if (this.equals(DOWN)) return direction != UP;
-        if (this.equals(LEFT)) return direction != RIGHT;
-        if (this.equals(RIGHT)) return direction != LEFT;
-
-        return true;
-    }
 }

@@ -43,7 +43,17 @@ public class Snake {
         console.getScreen().setItem(spots.get(0), Properties.FOOD);
     }
 
+    public boolean canGo(Direction direction) {
+        if (direction.equals(Direction.UP)) return direction != Direction.DOWN;
+        if (direction.equals(Direction.DOWN)) return direction != Direction.UP;
+        if (direction.equals(Direction.LEFT)) return direction != Direction.RIGHT;
+        if (direction.equals(Direction.RIGHT)) return direction != Direction.LEFT;
+
+        return true;
+    }
+
     public boolean update() {
+        Bukkit.getServer().broadcastMessage(parts.get(0) + "");
         int head = parts.get(parts.size() - 1);
         int nextX = InventoryUtils.getCoordinates(head)[0] + direction.getOffsetX();
         int nextY = InventoryUtils.getCoordinates(head)[1] + direction.getOffsetY();

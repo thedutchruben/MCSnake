@@ -25,7 +25,7 @@ public enum Button {
 
     public static Button getButton(ItemStack itemStack) {
         if (itemStack == null) return null;
-        if (itemStack.hasItemMeta()) return null;
+        if (!itemStack.hasItemMeta()) return null;
 
         return Arrays.stream(values())
                 .filter(button ->

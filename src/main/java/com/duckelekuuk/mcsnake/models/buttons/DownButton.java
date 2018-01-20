@@ -1,6 +1,8 @@
 package com.duckelekuuk.mcsnake.models.buttons;
 
+import com.duckelekuuk.mcsnake.models.Button;
 import com.duckelekuuk.mcsnake.models.Console;
+import com.duckelekuuk.mcsnake.models.Direction;
 import com.duckelekuuk.mcsnake.utils.Properties;
 import com.duckelekuuk.mcsnake.utils.SkullBuilder;
 import org.bukkit.inventory.ItemStack;
@@ -12,12 +14,12 @@ public class DownButton implements IButton {
 
     @Override
     public int getX() {
-        return 3;
+        return 4;
     }
 
     @Override
     public int getY() {
-        return 4;
+        return 3;
     }
 
     @Override
@@ -26,12 +28,23 @@ public class DownButton implements IButton {
     }
 
     @Override
-    public void press(Console console) {
+    public Button getButton() {
+        return Button.DOWN;
+    }
 
+    @Override
+    public boolean canBePressed(Console console) {
+        return console.getSnake().canGo(Direction.DOWN);
+    }
+
+    @Override
+    public void press(Console console) {
+        console.getSnake().setDirection(Direction.DOWN);
+        console.setItemInController(getX(), getY(), getItem(true));
     }
 
     @Override
     public void unPress(Console console) {
-
+        console.setItemInController(getX(), getY(), getItem(false));
     }
 }
