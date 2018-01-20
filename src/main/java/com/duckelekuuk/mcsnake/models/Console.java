@@ -54,7 +54,7 @@ public class Console {
     public void endGame(boolean displayCredits) {
         setPlaying(false);
         setGameOver(true);
-        getTimer().cancel();
+        if (getTimer() != null) getTimer().cancel();
         getScreen().clear();
 
         if (displayCredits) gameOverTimer = Bukkit.getServer().getScheduler().runTaskTimer(MCSnake.getPlugin(), new DisplayGameOver(this), 1, Properties.GAMEOVER_SPEED);
