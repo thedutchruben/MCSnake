@@ -6,7 +6,7 @@
 
     <groupId>com.duckelekuuk</groupId>
     <artifactId>MCsnake</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.4-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>MCsnake</name>
