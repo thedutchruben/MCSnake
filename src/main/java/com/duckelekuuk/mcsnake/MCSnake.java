@@ -1,5 +1,6 @@
 package com.duckelekuuk.mcsnake;
 
+import com.duckelekuuk.mcsnake.commands.SnakeCommand;
 import com.duckelekuuk.mcsnake.listeners.InventoryClickListeners;
 import com.duckelekuuk.mcsnake.listeners.InventoryCloseListener;
 import com.duckelekuuk.mcsnake.managers.ConsoleManager;
@@ -21,15 +22,6 @@ public final class MCSnake extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new InventoryClickListeners(), this);
         getServer().getPluginManager().registerEvents(new InventoryCloseListener(), this);
-    }
-
-
-    //TODO: REPLACE WITH COMMAND
-    @EventHandler
-    public void onChat(AsyncPlayerChatEvent event) {
-        Console console = new Console(event.getPlayer());
-        ConsoleManager.registerConsole(console);
-
-        console.open();
+        getCommand("snake").setExecutor(new SnakeCommand());
     }
 }

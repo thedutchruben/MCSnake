@@ -4,4 +4,16 @@ main: com.duckelekuuk.mcsnake.MCSnake
 authors: [Duckelekuuk]
 description: Allows you to play snake in minecraft
 website: https://duckelekuuk.com
-depends: WorldEdit
+
+commands:
+ snake:
+   permission: snake.play
+
+permissions:
+  snake.*:
+    description: Gives access to all snake commands
+    children:
+      snake.play: true
+  snake.play:
+    description: Gives access to play snake
+    default: true
