@@ -88,7 +88,6 @@ public class Console {
     }
 
     public void setItemInController(int x, int y, ItemStack itemStack) {
-        Bukkit.getServer().broadcastMessage(itemStack.getItemMeta().getDisplayName() + ": " + x + " - " + y);
         getController().setItem(InventoryUtils.getLocation(x, y), itemStack);
     }
 
@@ -109,13 +108,14 @@ public class Console {
         getController().clear();
 
         /* Setup screen */
-        List<Integer> spots = IntStream.range(0, (Properties.WIDTH * Properties.HEIGHT) - 1).boxed().collect(Collectors.toList());
-        spots.remove(Properties.START_POSITION);
-        Collections.shuffle(spots);
+//        List<Integer> spots = IntStream.range(0, (Properties.WIDTH * Properties.HEIGHT) - 1).boxed().collect(Collectors.toList());
+//        spots.remove(Properties.START_POSITION);
+//        Collections.shuffle(spots);
+//
+//        getScreen().setItem(spots.get(0), Properties.FOOD);
+        getSnake().spawnSnake();
+        getSnake().spawnFood();
 
-        getScreen().setItem(spots.get(0), Properties.FOOD);
-
-        getScreen().setItem(Properties.START_POSITION, Properties.SNAKE);
         InventoryUtils.fillEmpty(getScreen(), Properties.SCREEN_BACKGROUND);
 
         /* Setup controller */

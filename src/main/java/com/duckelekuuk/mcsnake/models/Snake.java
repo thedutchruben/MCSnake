@@ -19,14 +19,15 @@ public class Snake {
     private Console console;
     private List<Integer> parts = new ArrayList<>();
     private int size = 1;
+    private int foodAmount = 0;
 
     public Snake(Console console) {
         this.console = console;
-        parts.add(Properties.START_POSITION);
     }
 
     public void eatFood() {
         // Increase size
+        foodAmount--;
         size++;
     }
 
@@ -41,6 +42,7 @@ public class Snake {
 
         // Pick random spot
         console.getScreen().setItem(spots.get(0), Properties.FOOD);
+        foodAmount++;
     }
 
     public boolean canGo(Direction direction) {
@@ -52,8 +54,12 @@ public class Snake {
         return true;
     }
 
+    public void spawnSnake() {
+        console.getScreen().setItem(Properties.START_POSITION, Properties.SNAKE);
+        parts.add(Properties.START_POSITION);
+    }
+
     public boolean update() {
-        Bukkit.getServer().broadcastMessage(parts.get(0) + "");
         int head = parts.get(parts.size() - 1);
         int nextX = InventoryUtils.getCoordinates(head)[0] + direction.getOffsetX();
         int nextY = InventoryUtils.getCoordinates(head)[1] + direction.getOffsetY();
@@ -62,24 +68,25 @@ public class Snake {
         if (nextX < 0 || nextX > (Properties.WIDTH - 1)) return false;
         if (nextY < 0 || nextY > (Properties.HEIGHT - 1)) return false;
 
-        // Checking for collision with itself
-        if (parts.contains(InventoryUtils.getLocation(nextX, nextY))) return false;
-
         // Check if next block is food
         if (console.getScreen().getItem(InventoryUtils.getLocation(nextX, nextY)).isSimilar(Properties.FOOD)) eatFood();
 
-        // Move snake in direction
-        console.getScreen().setItem(InventoryUtils.getLocation(nextX, nextY), Properties.SNAKE);
-        parts.add(InventoryUtils.getLocation(nextX, nextY));
-
         // Let the last item stay to increase size
-        if (parts.size() <= size) {
-            return true;
+        if (parts.size() + 1 > size) {
+            int tail = parts.remove(0);
+            console.getScreen().setItem(tail, Properties.SCREEN_BACKGROUND);
         }
 
-        // Remove last part
-        int tail = parts.remove(0);
-        console.getScreen().setItem(tail, Properties.SCREEN_BACKGROUND);
+        // Checking for collision with itself
+        if (parts.contains(InventoryUtils.getLocation(nextX, nextY))) return false;
+
+        // Move snake in direction
+        parts.add(InventoryUtils.getLocation(nextX, nextY));
+
+        //spawn new blocks
+        if (foodAmount < Properties.FOOD_AMOUNT) spawnFood();
+        console.getScreen().setItem(InventoryUtils.getLocation(nextX, nextY), Properties.SNAKE);
+
         return true;
     }
 }

@@ -23,6 +23,8 @@ public final class MCSnake extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new InventoryCloseListener(), this);
     }
 
+
+    //TODO: REPLACE WITH COMMAND
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
         Console console = new Console(event.getPlayer());
