@@ -1,16 +1,20 @@
 package com.duckelekuuk.mcsnake.models;
 
 import com.duckelekuuk.mcsnake.MCSnake;
+import com.duckelekuuk.mcsnake.models.buttons.IButton;
 import com.duckelekuuk.mcsnake.schedulers.DisplayGameOver;
 import com.duckelekuuk.mcsnake.schedulers.GameTimer;
 import com.duckelekuuk.mcsnake.utils.InventoryUtils;
 import com.duckelekuuk.mcsnake.utils.Properties;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -24,17 +28,21 @@ public class Console {
     private Inventory inventory;
     private BukkitTask timer;
     private BukkitTask gameOverTimer;
+    private @Setter Button pressedButton;
 
     private Snake snake;
+    private List<Integer> food = new ArrayList<>();
 
-    private boolean playing = false;
-    private boolean gameOver = false;
+    private @Setter boolean playing = false;
+    private @Setter boolean gameOver = false;
 
     public Console(Player player) {
         this.player = player;
         this.inventory = Bukkit.getServer().createInventory(null, Properties.WIDTH * Properties.HEIGHT,  "Snake - " + player.getName());
         this.snake = new Snake(this);
-        setupConsole();
+
+        Bukkit.getServer().getScheduler().runTaskLater(MCSnake.getPlugin(), this::setupConsole, 1);
+
     }
 
     public void start() {
@@ -43,13 +51,13 @@ public class Console {
         timer = Bukkit.getServer().getScheduler().runTaskTimer(MCSnake.getPlugin(), new GameTimer(this), 1, Properties.GAME_SPEED);
     }
 
-    public void endGame() {
-        playing = false;
-        gameOver = true;
-        timer.cancel();
+    public void endGame(boolean displayCredits) {
+        setPlaying(false);
+        setGameOver(true);
+        if (getTimer() != null) getTimer().cancel();
         getScreen().clear();
 
-        gameOverTimer = Bukkit.getServer().getScheduler().runTaskTimer(MCSnake.getPlugin(), new DisplayGameOver(this), 1, Properties.GAMEOVER_SPEED);
+        if (displayCredits) gameOverTimer = Bukkit.getServer().getScheduler().runTaskTimer(MCSnake.getPlugin(), new DisplayGameOver(this), 1, Properties.GAMEOVER_SPEED);
     }
 
     /**
@@ -68,40 +76,23 @@ public class Console {
     }
 
     public void onClick(Button button) {
-        Direction nextDirection = null;
+        if (button == getPressedButton()) return;
+        if (!button.getInfo().canBePressed(this)) return;
 
-        switch (button) {
-            case UP:
-                nextDirection = Direction.UP;
-                break;
-            case DOWN:
-                nextDirection = Direction.DOWN;
-                break;
-            case LEFT:
-                nextDirection = Direction.LEFT;
-                break;
-            case RIGHT:
-                nextDirection = Direction.RIGHT;
-                break;
-            case QUIT:
-                close();
-                return;
-        }
+        if (getPressedButton() != null) getPressedButton().getInfo().unPress(this);
 
-        if (snake.getDirection() != null && !snake.getDirection().canGo(nextDirection)) return;
+        button.getInfo().press(this);
+        pressedButton = button;
 
-        if (snake.getDirection() != null) {
-            Button oldButton = snake.getDirection().getButton();
-            getController().setItem(InventoryUtils.getLocation(oldButton.getX(), oldButton.getY()), oldButton.getItem());
-        }
+        attemptStarting();
+    }
 
-        snake.setDirection(nextDirection);
+    public void setItemInController(int x, int y, ItemStack itemStack) {
+        getController().setItem(InventoryUtils.getLocation(x, y), itemStack);
+    }
 
-        Button clickedButton = snake.getDirection().getButton();
-
-        getController().setItem(InventoryUtils.getLocation(clickedButton.getX(), clickedButton.getY()), clickedButton.getItem_active());
-
-        if (!playing) start();
+    public void attemptStarting() {
+        if (!isPlaying() && !isGameOver()) start();
     }
 
     public void open() {
@@ -113,25 +104,22 @@ public class Console {
     }
 
     private void setupConsole() {
-        Bukkit.getServer().getScheduler().runTaskLater(MCSnake.getPlugin(), () -> {
+        getScreen().clear();
+        getController().clear();
 
-            getScreen().clear();
-            getController().clear();
+        /* Setup screen */
+//        List<Integer> spots = IntStream.range(0, (Properties.WIDTH * Properties.HEIGHT) - 1).boxed().collect(Collectors.toList());
+//        spots.remove(Properties.START_POSITION);
+//        Collections.shuffle(spots);
+//
+//        getScreen().setItem(spots.get(0), Properties.FOOD);
+        getSnake().spawnSnake();
+        getSnake().spawnFood();
 
-            /* Setup screen */
-            List<Integer> spots = IntStream.range(0, (Properties.WIDTH * Properties.HEIGHT) - 1).boxed().collect(Collectors.toList());
-            spots.remove(Properties.START_POSITION);
-            Collections.shuffle(spots);
+        InventoryUtils.fillEmpty(getScreen(), Properties.SCREEN_BACKGROUND);
 
-            getScreen().setItem(spots.get(0), Properties.FOOD);
-
-            getScreen().setItem(Properties.START_POSITION, Properties.SNAKE);
-            InventoryUtils.fillEmpty(getScreen(), Properties.SCREEN_BACKGROUND);
-
-            /* Setup controller */
-            Arrays.asList(Button.values()).forEach(button -> getController().setItem(InventoryUtils.getLocation(button.getX(), button.getY()), button.getItem()));
-            InventoryUtils.fillEmpty(getController(), Properties.CONTROLLER_BACKGROUND);
-
-        }, 1);
+        /* Setup controller */
+        Arrays.asList(Button.values()).forEach(button -> setItemInController(button.getInfo().getX(), button.getInfo().getY(), button.getInfo().getItem(false)));
+        InventoryUtils.fillEmpty(getController(), Properties.CONTROLLER_BACKGROUND);
     }
 }

@@ -20,7 +20,6 @@ public class InventoryClickListeners implements Listener {
         Console console = ConsoleManager.getConsole(player);
 
         if (console == null) return;
-
         if (!console.getInventory().getViewers().contains(player)) return;
 
         event.setCancelled(true);

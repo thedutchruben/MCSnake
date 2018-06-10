@@ -9,6 +9,7 @@ public class Properties {
     /* Settings */
     public static int WIDTH = 9;
     public static int HEIGHT = 6;
+    public static int FOOD_AMOUNT = 1;
     public static int START_POSITION = InventoryUtils.getLocation(4, 3);
     public static int GAME_SPEED = 10;
     public static int GAMEOVER_SPEED = 2;
