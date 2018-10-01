@@ -1,14 +1,10 @@
 package com.duckelekuuk.mcsnake;
 
 import com.duckelekuuk.mcsnake.commands.SnakeCommand;
-import com.duckelekuuk.mcsnake.listeners.InventoryClickListeners;
-import com.duckelekuuk.mcsnake.listeners.InventoryCloseListener;
-import com.duckelekuuk.mcsnake.managers.ConsoleManager;
-import com.duckelekuuk.mcsnake.models.Console;
+import com.duckelekuuk.mcsnake.listeners.InventoryClickEventListener;
+import com.duckelekuuk.mcsnake.listeners.InventoryCloseEventListener;
 import lombok.Getter;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class MCSnake extends JavaPlugin implements Listener {
@@ -20,8 +16,8 @@ public final class MCSnake extends JavaPlugin implements Listener {
     public void onEnable() {
         plugin = this;
         getServer().getPluginManager().registerEvents(this, this);
-        getServer().getPluginManager().registerEvents(new InventoryClickListeners(), this);
-        getServer().getPluginManager().registerEvents(new InventoryCloseListener(), this);
+        getServer().getPluginManager().registerEvents(new InventoryClickEventListener(), this);
+        getServer().getPluginManager().registerEvents(new InventoryCloseEventListener(), this);
         getCommand("snake").setExecutor(new SnakeCommand());
     }
 }

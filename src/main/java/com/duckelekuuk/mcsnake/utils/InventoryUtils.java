@@ -14,7 +14,7 @@ public class InventoryUtils {
     public static int[] getCoordinates(int location) {
         int[] returnData = new int[2];
         returnData[0] = (int) Math.floor(location % 9);
-        returnData[1] = (int) Math.floor(location / 9);
+        returnData[1] = (int) Math.floor(location / 9D);
         return returnData;
     }
 

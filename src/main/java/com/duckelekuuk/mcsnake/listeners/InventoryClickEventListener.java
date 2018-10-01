@@ -3,14 +3,13 @@ package com.duckelekuuk.mcsnake.listeners;
 import com.duckelekuuk.mcsnake.managers.ConsoleManager;
 import com.duckelekuuk.mcsnake.models.Button;
 import com.duckelekuuk.mcsnake.models.Console;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-public class InventoryClickListeners implements Listener {
+public class InventoryClickEventListener implements Listener {
 
     @EventHandler
     public void onClick(InventoryClickEvent event) {
